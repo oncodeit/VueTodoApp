@@ -1,0 +1,86 @@
+<html>
+	<head>
+		<title>Yet another TODO app with Vue.js</title>
+		<link rel="stylesheet" type="text/css" href="main.css" />
+		<link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css">
+		<script src="https://unpkg.com/vue"></script>
+	</head>
+
+	<body>
+		<div class="wrapper">
+			<!-- main app container -->
+			<div id="app" class="center-container">	
+				<div>
+					<input 
+					v-model="message" 
+					v-on:focus="inputFocus"
+					v-on:blur="lostFocus"
+					v-on:keydown.enter="addNewTodo"
+					class="input text-input header-input" />
+					<span class="underline"></span>
+				</div>
+				<div>
+					<ul>
+						<!-- 
+							declare that this <li> is made from the Vue template named "todo-item"
+							templatize it using v-for 
+							define the removal action
+						-->
+						<li is="todo-item"
+							v-for="(todo, index) in todoList"
+							v-bind:key="todo"
+							v-bind:title="todo"
+							v-on:remove="todoList.splice(index, 1)">
+						</li>	
+					</ul>
+				</div>
+			</div>
+		</div>
+	</body>
+
+	<script type="text/javascript">
+		// Create a template for the TODO item component 
+		Vue.component('todo-item', {
+
+			// we add a <li> element, composed by an icon and the title of the TODO.
+			// we also inject the remove action
+			template: 
+				`<li class="todo-item">
+					<i v-on:click="$emit('remove')" class="remove-button zmdi zmdi-delete"></i>
+					{{ title }}
+		    	</li>`,
+		  props: ['title']
+		})
+
+		// init Vue.js
+		var app = new Vue({
+			// select the app div
+			el: '#app',
+			data: {
+				// default message for the first TODO
+				message: 'Your first TODO!',
+				// declase an empty list of TODOs
+				todoList: []
+			},
+			methods : {
+				// default action to use when we click away from the input
+				lostFocus : function(event) {
+					this.message = "Input your TODO here";
+				},
+
+				// reset the text when clicking the input
+				inputFocus : function(event){
+					this.message = "";
+				},
+
+				// add to the head of the list a new todo when enter key is pressed
+				addNewTodo : function() {
+					this.todoList.unshift(this.message);
+					this.message = "";
+				}
+			}
+		})
+
+	</script>
+</html>
